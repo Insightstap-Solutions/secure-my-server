@@ -1,0 +1,2 @@
+2026-10-20T03:14:15.000000000Z [20-Oct-2026 03:14:15] WARNING: [pool www] child 77 exited on signal 11 (SIGSEGV - core dumped) after 0.5 seconds from start
+2026-10-20T03:14:16.000000000Z 127.0.0.1 -  20/Oct/2026:03:14:16 +0000 "POST /index.php" 502

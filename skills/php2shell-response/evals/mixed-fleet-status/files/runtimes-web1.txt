@@ -1,0 +1,7 @@
+# php_runtimes.sh on web1
+INFO	runtime	path=/www/server/php/84/sbin/php-fpm kind=aapanel sapi=fpm version=8.4.26
+CRIT	status	/www/server/php/84/sbin/php-fpm VULNERABLE (8.4.26 < 8.4.27)
+WARN	ini	/www/server/php/84 session.upload_progress.enabled=On display_errors=Off expose_php=On post_max_size=50M memory_limit=256M
+INFO	runtime	path=/usr/bin/php8.1 kind=distro sapi=cli version=8.1.2-1ubuntu2.22 package=php8.1-cli
+INFO	status	/usr/bin/php8.1 CLI only, not serving web requests
+SUMMARY	crit=1 warn=1 info=3

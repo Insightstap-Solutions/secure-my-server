@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# test shim for ss: listening sockets from $SMS_FAKE/ss-listen, others from $SMS_FAKE/ss-estab
+case "$1" in
+  -*l*) cat "${SMS_FAKE:-/nonexistent}/ss-listen" 2>/dev/null ;;
+  *) cat "${SMS_FAKE:-/nonexistent}/ss-estab" 2>/dev/null ;;
+esac
+exit 0

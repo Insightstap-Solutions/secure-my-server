@@ -1,0 +1,5 @@
+# php_runtimes.sh on web2
+INFO	runtime	path=/usr/sbin/php-fpm8.3 kind=distro sapi=fpm version=8.3.6-0ubuntu0.24.04.6 package=php8.3-fpm
+OK	status	/usr/sbin/php-fpm8.3 PATCHED_VENDOR (changelog.Debian.gz mentions CVE-2026-109618)
+WARN	ini	/etc/php/8.3/fpm session.upload_progress.enabled=On display_errors=Off expose_php=Off post_max_size=8M memory_limit=128M
+SUMMARY	crit=0 warn=1 ok=1

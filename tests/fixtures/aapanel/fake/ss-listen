@@ -1,0 +1,6 @@
+State  Recv-Q Send-Q Local Address:Port  Peer Address:Port Process
+LISTEN 0      511          0.0.0.0:80        0.0.0.0:*     users:(("nginx",pid=1500,fd=6))
+LISTEN 0      511          0.0.0.0:443       0.0.0.0:*     users:(("nginx",pid=1500,fd=7))
+LISTEN 0      80           0.0.0.0:3306      0.0.0.0:*     users:(("mysqld",pid=1700,fd=20))
+LISTEN 0      511        127.0.0.1:9000      0.0.0.0:*     users:(("php-fpm",pid=1800,fd=5))
+LISTEN 0      128          0.0.0.0:8888      0.0.0.0:*     users:(("BT-Panel",pid=1900,fd=4))

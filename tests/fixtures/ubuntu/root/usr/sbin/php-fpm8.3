@@ -1,0 +1,15 @@
+#!/bin/sh
+# test fixture: fake PHP binary, prints a version and a few phpinfo lines
+case "$1" in
+  -v) echo "PHP 8.3.6 (fpm-fcgi) (built: Oct 21 2026 10:00:00) (NTS)"; echo "Copyright (c) The PHP Group" ;;
+  -i) cat <<'INFO'
+phpinfo()
+PHP Version => 8.3.6
+session.upload_progress.enabled => On => On
+display_errors => Off => Off
+expose_php => Off => Off
+post_max_size => 100M => 100M
+memory_limit => 256M => 256M
+INFO
+  ;;
+esac

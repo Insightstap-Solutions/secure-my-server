@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# test shim for ps: prints $SMS_FAKE/ps (pid user pcpu comm)
+cat "${SMS_FAKE:-/nonexistent}/ps" 2>/dev/null
+exit 0

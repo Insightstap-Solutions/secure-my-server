@@ -1,0 +1,2 @@
+2026/10/20 03:14:15 [error] 123#123: *45 upstream prematurely closed connection while reading response header from upstream, client: 203.0.113.9, server: _, request: "POST /?token=FAKE_SECRET_DO_NOT_PRINT_7f3a9c HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.3-fpm.sock:", host: "example.com"
+2026/10/20 03:14:17 [error] 123#123: *46 recv() failed (104: Connection reset by peer) while reading response header from upstream, client: 203.0.113.9, server: _, request: "POST / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.3-fpm.sock:", host: "example.com"

@@ -1,0 +1,5 @@
+[10-Oct-2026 08:00:00] WARNING: [pool www] child 999 exited on signal 11 (SIGSEGV - core dumped) after 3.000000 seconds from start
+[20-Oct-2026 03:14:15] WARNING: [pool www] child 12345 exited on signal 11 (SIGSEGV - core dumped) after 1.200000 seconds from start
+[20-Oct-2026 03:14:17] WARNING: [pool www] child 12346 exited on signal 6 (SIGABRT - core dumped) after 0.400000 seconds from start
+[20-Oct-2026 03:14:18] NOTICE: [pool www] child 12400 started
+[20-Oct-2026 03:14:19] WARNING: [pool www] child 12401 exited on signal 15 (SIGTERM) after 9.000000 seconds from start

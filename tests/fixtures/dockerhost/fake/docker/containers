@@ -1,0 +1,5 @@
+c1	shop-app	php:8.3-fpm-alpine	shop	9000/tcp	false	shop_default	2026-09-01T10:00:00.000Z	/srv/shop
+c2	shop-api	php:8.4-cli	shop		false	shop_default	2026-09-01T10:00:00.000Z	
+c3	shop-mysql	mysql:8.0	shop	0.0.0.0:3306->3306/tcp, :::3306->3306/tcp	false	shop_default	2026-09-01T10:00:00.000Z	/var/lib/docker/volumes/db/_data
+c4	shop-nginx	nginx:1.27-alpine	shop	0.0.0.0:80->80/tcp	false	shop_default	2026-09-01T10:00:00.000Z	/srv/shop
+c5	updater	alpine:3.20			true	host	2026-10-20T03:30:00.000Z	/var/run/docker.sock,/

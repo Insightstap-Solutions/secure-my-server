@@ -1,0 +1,11 @@
+#!/bin/sh
+# test fixture: what `docker exec c1 ...` answers (php-fpm 8.3.30 official image, vulnerable)
+case "$*" in
+  *"command -v"*) echo /usr/local/sbin/php-fpm; echo /usr/local/bin/php ;;
+  *php-fpm.d*) printf '[@file /usr/local/etc/php-fpm.d/www.conf]\n[www]\nuser = www-data\n; FAKE_SECRET_DO_NOT_PRINT_7f3a9c\nenv[APP_KEY] = FAKE_SECRET_DO_NOT_PRINT_7f3a9c\n' ;;
+  *"php-fpm -v"*) echo "PHP 8.3.30 (fpm-fcgi) (built: Oct  1 2026 10:00:00)" ;;
+  *"php-fpm -i"*) printf 'session.upload_progress.enabled => On => On\ndisplay_errors => Off => Off\nexpose_php => On => On\npost_max_size => 8M => 8M\nmemory_limit => 128M => 128M\n' ;;
+  *"php -v"*) echo "PHP 8.3.30 (cli) (built: Oct  1 2026 10:00:00)" ;;
+  *"php -i"*) printf 'session.upload_progress.enabled => On => On\ndisplay_errors => STDOUT => STDOUT\n' ;;
+  *) exit 127 ;;
+esac

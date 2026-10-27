@@ -1,0 +1,17 @@
+{
+  "name": "secure-my-server",
+  "description": "Claude Code plugin for patching PHP2Shell and hardening Linux servers safely.",
+  "owner": {
+    "name": "Ankit Raj",
+    "url": "https://github.com/ankitraj20616"
+  },
+  "plugins": [
+    {
+      "name": "secure-my-server",
+      "source": "./",
+      "description": "Find, patch and clean up PHP2Shell (CVE-2026-109618/109619) and harden Linux servers of any setup, with approval gates and an independent verifier.",
+      "category": "security",
+      "tags": ["security", "php", "server-hardening", "incident-response"]
+    }
+  ]
+}

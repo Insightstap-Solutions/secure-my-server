@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: mixed-fleet-status
+expected_outcome: |
+  Identifies the aaPanel PHP 8.4.26 on web1 as vulnerable and the Ubuntu distro PHP 8.3.6 package on web2 as patched by the vendor (changelog names the CVE), explicitly not judging the distro package by its version number. Gives a plan: patch web1's aaPanel PHP following the aaPanel guide, restart every worker, turn session.upload_progress off on both, verify the running process, and ask before the production restart.
+context:
+  scaffold_script: place-files.sh

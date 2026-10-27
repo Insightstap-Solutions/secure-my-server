@@ -1,0 +1,2 @@
+* Tue Oct 22 2026 Remi Collet <rcollet@redhat.com> - 8.2.13-2
+- fix CVE-2026-109618

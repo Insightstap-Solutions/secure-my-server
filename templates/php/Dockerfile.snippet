@@ -1,0 +1,18 @@
+# secure-my-server: add to the PHP stage of a Dockerfile built FROM php:<X.Y>-fpm
+# (official image). The build FAILS if PHP is older than the fixed release for its
+# branch, or if a hardening value is still on. Adjust the COPY source paths.
+COPY docker/php/zz-hardening.ini /usr/local/etc/php/conf.d/zz-hardening.ini
+COPY docker/php/zz-pool.conf     /usr/local/etc/php-fpm.d/zz-pool.conf
+ENV PHP_FPM_MAX_CHILDREN=6 PHP_FPM_START_SERVERS=2 PHP_FPM_MIN_SPARE_SERVERS=1 PHP_FPM_MAX_SPARE_SERVERS=3
+# libfcgi-bin provides cgi-fcgi, used by scripts/fpm_ini_probe.sh to read values FROM FPM.
+# (Alpine images: apk add --no-cache fcgi)
+RUN apt-get update && apt-get install -y --no-install-recommends libfcgi-bin && rm -rf /var/lib/apt/lists/* \
+ && php -r '$fixed = ["8.2" => "8.2.35", "8.3" => "8.3.36", "8.4" => "8.4.27", "8.5" => "8.5.12"]; \
+            $b = PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION; \
+            if (!isset($fixed[$b])) { fwrite(STDERR, "PHP $b has no fixed release in this table; check php.net\n"); exit(1); } \
+            if (version_compare(PHP_VERSION, $fixed[$b], "<")) { fwrite(STDERR, PHP_VERSION . " is vulnerable (CVE-2026-109618/109619); need >= " . $fixed[$b] . "\n"); exit(1); }' \
+ && php -r 'foreach (["display_errors","display_startup_errors","expose_php","session.upload_progress.enabled"] as $k) if (ini_get($k)) { fwrite(STDERR, "$k is on\n"); exit(1); }' \
+ && php-fpm -t
+# Build with --pull so the base image (and its PHP) is fresh:
+#   docker build --pull ...      or      docker compose build --pull
+# Then RECREATE the containers (docker compose up -d), never just restart them.

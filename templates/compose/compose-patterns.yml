@@ -1,0 +1,27 @@
+# Patterns, not a full file. Copy the parts you need.
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}   # no ":-changeme" fallback
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"                                # loopback only
+
+  redis:
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?REDIS_PASSWORD must be set}"]
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  app:
+    environment:
+      PHP_FPM_MAX_CHILDREN: ${PHP_FPM_MAX_CHILDREN:-20}    # always give FPM pool vars a default
+
+  web:
+    volumes:
+      - caddy_logs:/var/log/caddy                          # access logs survive recreates
+
+  queue:
+    stop_signal: SIGTERM          # php-fpm images default to SIGQUIT; a bash PID 1 ignores it
+    stop_grace_period: 11m        # long jobs may finish, but only if the signal is handled
+
+volumes:
+  caddy_logs:

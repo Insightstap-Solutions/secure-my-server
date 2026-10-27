@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# test shim: answers from $SMS_FAKE/rpm (path<TAB>name<TAB>version-release) and
+# $SMS_FAKE/rpm-changelog-$SMS_RPM_CHANGELOG
+db="${SMS_FAKE:-/nonexistent}/rpm"
+if [ "$1" = -qf ]; then
+  p=${!#}
+  line=$(awk -F'\t' -v p="$p" '$1 == p { print $2 "\t" $3; exit }' "$db" 2>/dev/null)
+  [ -n "$line" ] || { echo "file $p is not owned by any package"; exit 1; }
+  printf '%s\n' "$line"; exit 0
+fi
+if [ "$1" = -q ] && [ "$2" = --changelog ]; then
+  f="${SMS_FAKE:-/nonexistent}/rpm-changelog-${SMS_RPM_CHANGELOG:-none}"
+  [ -f "$f" ] && cat "$f"; exit 0
+fi
+exit 1

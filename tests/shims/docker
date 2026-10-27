@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# test shim for docker. Data: $SMS_FAKE/docker/containers (TSV: id name image project ports
+# privileged netmode created mounts), exec/<id> answer scripts, logs/<id> log text.
+# Supports only the Go templates the scripts use.
+d="${SMS_FAKE:-/nonexistent}/docker"
+[ -f "$d/containers" ] || { echo "Cannot connect to the Docker daemon" >&2; exit 1; }
+render() { # FMT then the 9 fields
+  local fmt=$1 id=$2 name=$3 image=$4 proj=$5 ports=$6 priv=$7 net=$8 created=$9 mounts=${10}
+  fmt=${fmt//'{{.ID}}'/$id}; fmt=${fmt//'{{.Names}}'/$name}; fmt=${fmt//'{{.Name}}'//$name}
+  fmt=${fmt//'{{.Image}}'/$image}; fmt=${fmt//'{{.Label "com.docker.compose.project"}}'/$proj}
+  fmt=${fmt//'{{.Ports}}'/$ports}; fmt=${fmt//'{{.HostConfig.Privileged}}'/$priv}
+  fmt=${fmt//'{{.HostConfig.NetworkMode}}'/$net}; fmt=${fmt//'{{.Created}}'/$created}
+  fmt=${fmt//'{{range .Mounts}}{{.Source}},{{end}}'/${mounts:+$mounts,}}
+  printf '%s\n' "$fmt"
+}
+cmd=$1; shift
+case $cmd in
+  ps)
+    fmt='{{.ID}}' ; all=0
+    while [ $# -gt 0 ]; do case $1 in --format) fmt=$2; shift 2 ;; -a) all=1; shift ;; -q) shift ;; -aq | -qa) all=1; shift ;; *) shift ;; esac; done
+    while IFS=$'\037' read -r id name image proj ports priv net created mounts; do
+      [ -z "$id" ] && continue
+      # c5 is "exited": only listed with -a
+      [ "$id" = c5 ] && [ $all = 0 ] && continue
+      render "$fmt" "$id" "$name" "$image" "$proj" "$ports" "$priv" "$net" "$created" "$mounts"
+    done < <(tr '\t' '\037' < "$d/containers") ;;
+  inspect)
+    fmt=""; ids=()
+    while [ $# -gt 0 ]; do case $1 in --format | -f) fmt=$2; shift 2 ;; *) ids+=("$1"); shift ;; esac; done
+    for want in "${ids[@]}"; do
+      while IFS=$'\037' read -r id name image proj ports priv net created mounts; do
+        [ "$id" = "$want" ] && render "$fmt" "$id" "$name" "$image" "$proj" "$ports" "$priv" "$net" "$created" "$mounts"
+      done < <(tr '\t' '\037' < "$d/containers")
+    done ;;
+  exec)
+    while [ $# -gt 0 ]; do case $1 in -i | -t | -it) shift ;; *) break ;; esac; done
+    id=$1; shift
+    [ -x "$d/exec/$id" ] || exit 126
+    exec "$d/exec/$id" "$@" ;;
+  logs)
+    id=${!#}
+    [ -f "$d/logs/$id" ] && cat "$d/logs/$id"; exit 0 ;;
+  *) exit 1 ;;
+esac

@@ -1,0 +1,4 @@
+[Unit]
+Description=test fixture
+[Service]
+ExecStart=/tmp/.x/kworkerd

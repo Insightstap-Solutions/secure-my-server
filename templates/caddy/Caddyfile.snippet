@@ -1,0 +1,42 @@
+# Global options: real client IPs from the front nginx, plus a stdout copy of access logs.
+{
+	servers {
+		trusted_proxies static private_ranges
+		trusted_proxies_strict
+		client_ip_headers X-Forwarded-For
+	}
+	log access_stdout {
+		include http.log.access
+		output stdout
+	}
+}
+
+{$APP_DOMAIN::80} {
+	root * /var/www/html/public
+
+	# FPM status/ping are for us only.
+	@fpm_internal path /fpm-status* /fpm-ping*
+	respond @fpm_internal 404
+
+	# KEEP whatever forces HTTPS for the app (signed URLs depend on it), e.g.:
+	# php_fastcgi app:9000 { header_up X-Forwarded-Proto https; env HTTPS on }
+
+	header {
+		defer               # also apply to fastcgi responses
+		-Server
+		-X-Powered-By
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+
+	# Access log to a FILE on a named volume (compose: caddy_logs:/var/log/caddy).
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 50MiB
+			roll_keep 20
+			roll_keep_for 2160h
+		}
+		format json
+	}
+}

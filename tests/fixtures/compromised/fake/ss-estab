@@ -1,0 +1,6 @@
+State Recv-Q Send-Q Local Address:Port   Peer Address:Port Process
+ESTAB 0      0          10.0.0.5:22      198.51.100.20:52044 users:(("sshd",pid=900,fd=4))
+ESTAB 0      0          10.0.0.5:41234   203.0.113.50:3333   users:(("kdevtmpfsi",pid=4444,fd=7))
+ESTAB 0      0          10.0.0.5:41300   203.0.113.60:4433   users:(("bash",pid=4500,fd=3))
+ESTAB 0      0          10.0.0.5:41400   203.0.113.34:443   users:(("php-fpm8.3",pid=210,fd=9))
+ESTAB 0      0          10.0.0.5:41500   10.0.0.9:3306       users:(("php-fpm8.3",pid=211,fd=9))

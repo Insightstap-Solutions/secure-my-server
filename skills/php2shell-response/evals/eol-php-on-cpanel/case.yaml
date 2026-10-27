@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: eol-php-on-cpanel
+expected_outcome: |
+  Explains that 8.3.30 must go to 8.3.36 or later through EasyApache/ea-php packages, and that PHP 7.4 has no official fix: only a vendor backport (e.g. CloudLinux/TuxCare style LTS) or the php-src source backport branch, otherwise an upgrade. For 7.4 until then: the php.net mitigations set where they apply before request parsing on cPanel (php.ini for that ea-php / MultiPHP INI, not .user.ini or ini_set), a restart of every worker, edge rules rejecting multipart with an empty boundary, and an honest statement that mitigations do not make it safe.

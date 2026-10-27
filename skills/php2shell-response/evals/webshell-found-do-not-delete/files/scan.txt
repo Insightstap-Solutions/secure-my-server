@@ -1,0 +1,4 @@
+# webshell_scan.sh --since 2026-10-21 on shop (production)
+CRIT	new-php-in-uploads	/var/www/shop/public/uploads/2026/10/thumb.php size=2312 mtime=2026-10-23T07:41:09 ctime=2026-10-23T07:41:09 owner=www-data sha256=9f2c1e0b7a6d5c4b3a2918f7e6d5c4b3a2918f7e6d5c4b3a2918f7e6d5c4b3a rules=eval-superglobal,base64-blob
+INFO	vendor-eval	/var/www/shop/vendor/symfony/var-dumper/Caster/StubCaster.php rules=eval (vendor, older than --since)
+SUMMARY	crit=1 warn=0 info=1

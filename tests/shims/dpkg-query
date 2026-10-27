@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# test shim: answers from $SMS_FAKE/dpkg (path<TAB>package<TAB>version)
+db="${SMS_FAKE:-/nonexistent}/dpkg"
+case "$1" in
+  -S | --search)
+    line=$(awk -F'\t' -v p="$2" '$1 == p { print; exit }' "$db" 2>/dev/null)
+    [ -n "$line" ] || { echo "dpkg-query: no path found matching pattern $2" >&2; exit 1; }
+    printf '%s: %s\n' "$(cut -f2 <<<"$line")" "$2" ;;
+  -W | --show)
+    pkg=${!#}
+    v=$(awk -F'\t' -v p="$pkg" '$2 == p { print $3; exit }' "$db" 2>/dev/null)
+    [ -n "$v" ] || exit 1
+    printf '%s' "$v" ;;
+  *) exit 1 ;;
+esac

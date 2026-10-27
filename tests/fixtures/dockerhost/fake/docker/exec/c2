@@ -1,0 +1,8 @@
+#!/bin/sh
+# test fixture: php 8.4.27 cli (patched)
+case "$*" in
+  *"command -v"*) echo /usr/local/bin/php ;;
+  *"php -v"*) echo "PHP 8.4.27 (cli) (built: Oct 21 2026 10:00:00)" ;;
+  *"php -i"*) printf 'session.upload_progress.enabled => Off => Off\n' ;;
+  *) exit 127 ;;
+esac

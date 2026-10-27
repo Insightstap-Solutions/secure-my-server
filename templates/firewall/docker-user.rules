@@ -1,0 +1,15 @@
+# Append to /etc/ufw/after.rules AND /etc/ufw/after6.rules, then `ufw reload`.
+# Dry-run first:  <this block> | iptables-restore --test -n   (and ip6tables-restore)
+# DOCKER-USER sees packets AFTER DNAT, so match the ORIGINAL host port.
+# Check the public interface name first: ip route show default
+# BEGIN docker-user-belt
+*filter
+:DOCKER-USER - [0:0]
+-A DOCKER-USER -i eth0 -p tcp -m conntrack --ctdir ORIGINAL --ctorigdstport 5432:5434 -j DROP
+-A DOCKER-USER -i eth0 -p tcp -m conntrack --ctdir ORIGINAL --ctorigdstport 6379:6384 -j DROP
+-A DOCKER-USER -i eth0 -p tcp -m conntrack --ctdir ORIGINAL --ctorigdstport 3306:3310 -j DROP
+-A DOCKER-USER -i eth0 -p tcp -m conntrack --ctdir ORIGINAL --ctorigdstport 27017 -j DROP
+-A DOCKER-USER -i eth0 -p tcp -m conntrack --ctdir ORIGINAL --ctorigdstport 8000:8002 -j DROP
+-A DOCKER-USER -j RETURN
+COMMIT
+# END docker-user-belt
