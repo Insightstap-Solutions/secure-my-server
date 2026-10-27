@@ -1,0 +1,7 @@
+etc/alternatives/php	/usr/bin/php8.3
+proc/1234/exe	/usr/sbin/php-fpm8.3 (deleted)
+proc/2222/exe	/tmp/.x/php-fpm
+usr/bin/php	/etc/alternatives/php
+usr/share/doc/libapache2-mod-php8.3	php8.3-common
+usr/share/doc/php8.3-cli	php8.3-common
+usr/share/doc/php8.3-fpm	php8.3-common

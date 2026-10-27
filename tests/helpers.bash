@@ -32,6 +32,16 @@ setup_sandbox() {
   TOUCH=$(type -P touch); HEAD=$(type -P head); CP=$(type -P cp)
   if [ "$fixture" != "-" ]; then
     cp -a "$FIXTURES/$fixture/root" "$SBX/root"
+    # Symlinks and NUL bytes are kept out of git (plugin directories refuse them):
+    # links.tsv lists "path<TAB>target", and *.nulsrc files get each newline turned into a NUL.
+    local lp lt n
+    if [ -f "$FIXTURES/$fixture/links.tsv" ]; then
+      while IFS=$'\t' read -r lp lt; do
+        [ -n "$lp" ] || continue
+        mkdir -p "$(dirname "$SBX/root/$lp")"; ln -s "$lt" "$SBX/root/$lp"
+      done <"$FIXTURES/$fixture/links.tsv"
+    fi
+    while IFS= read -r n; do tr '\n' '\000' <"$n" >"${n%.nulsrc}"; rm -f "$n"; done < <(find "$SBX/root" -type f -name '*.nulsrc')
     find "$SBX/root" -type f -name changelog.Debian -exec gzip -n {} +
     # *.gzsrc fixture files become *.gz (git keeps the readable text)
     local g

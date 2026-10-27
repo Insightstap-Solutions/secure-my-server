@@ -1,0 +1,3 @@
+proc/100/exe	/usr/sbin/nginx
+proc/200/exe	/usr/sbin/php-fpm8.3 (deleted)
+proc/4444/exe	/tmp/kdevtmpfsi (deleted)

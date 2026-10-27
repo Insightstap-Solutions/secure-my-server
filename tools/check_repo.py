@@ -5,6 +5,8 @@
 - Every `${CLAUDE_PLUGIN_ROOT}/...` and `${CLAUDE_SKILL_DIR}/...` path named in
   Markdown exists in the repository.
 - plugin.json version matches the newest CHANGELOG entry.
+- Plugin directory file rules: no symlinks, no file over 256 KiB, no NUL
+  bytes outside images, at most 512 files.
 - Privacy: no public IPv4 addresses outside documentation ranges, and no email
   addresses other than the allowed ones. This repository is public.
 
@@ -105,6 +107,23 @@ def main() -> int:
         for email in EMAIL_RE.findall(text):
             if email not in ALLOWED_EMAILS and not email.endswith((".invalid", "example.com", "example.org")):
                 problems.append(f"{rel}: email address {email}")
+
+    import subprocess
+    tracked = subprocess.run(["git", "-C", str(ROOT), "ls-files", "-s"], capture_output=True, text=True).stdout.splitlines()
+    if len(tracked) > 512:
+        problems.append(f"{len(tracked)} files tracked; the plugin directory accepts at most 512")
+    for line in tracked:
+        mode, _, _, rel = line.split(None, 3)
+        if mode == "120000":
+            problems.append(f"{rel}: symlink (the plugin directory refuses symlinks; see tests/fixtures/*/links.tsv)")
+            continue
+        path = ROOT / rel
+        if not path.is_file():
+            continue
+        if path.stat().st_size > 256 * 1024:
+            problems.append(f"{rel}: larger than 256 KiB")
+        if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".gif", ".webp"} and b"\0" in path.read_bytes():
+            problems.append(f"{rel}: contains NUL bytes (binary); store it as text (see *.nulsrc)")
 
     version = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())["version"]
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
