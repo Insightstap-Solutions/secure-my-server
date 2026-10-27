@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 Claude Code only offers an update when `version` in `plugins/secure-my-server/.claude-plugin/plugin.json` changes, so every release bumps it.
 
+## [Unreleased]
+
+### Added
+- `PRIVACY.md`: what the plugin reads, where it goes, and what it never does; linked from `plugin.json` (`privacyPolicyUrl`).
+
 ## [0.2.1] - 2026-10-27
 
 ### Changed

@@ -10,6 +10,8 @@
   "homepage": "https://github.com/ankitraj20616/secure-my-server",
   "repository": "https://github.com/ankitraj20616/secure-my-server",
   "license": "MIT",
+  "privacyPolicyUrl": "https://github.com/ankitraj20616/secure-my-server/blob/main/PRIVACY.md",
+  "supportUrl": "https://github.com/ankitraj20616/secure-my-server/issues",
   "keywords": [
     "security",
     "server-hardening",

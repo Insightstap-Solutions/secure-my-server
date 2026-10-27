@@ -14,7 +14,7 @@ A Claude Code plugin that finds and fixes security problems on Linux servers, sa
 
 ## How it handles your data
 
-Nothing is sent anywhere by the plugin. Claude runs the scripts on servers you name, over your own SSH connection. Some scripts read configuration and env files **on those servers** to check them, and report only key names, classes and fingerprints, never values. Claude asks before any change, restart or deletion.
+Nothing is sent anywhere by the plugin. Claude runs the scripts on servers you name, over your own SSH connection. Some scripts read configuration and env files **on those servers** to check them, and report only key names, classes and fingerprints, never values. Claude asks before any change, restart or deletion. Full details: [PRIVACY.md](PRIVACY.md).
 
 ## Use
 
