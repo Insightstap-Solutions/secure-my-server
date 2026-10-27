@@ -10,7 +10,7 @@
 
 ## Next: v0.3 (prove it on real servers)
 - [ ] Run `php2shell-response` on real servers of each kind: a cPanel box, a Plesk box, a plain Ubuntu box with distro PHP, a RHEL box with Remi, a Docker host. Fix every wrong path or command the guides contain.
-- [ ] Run the skill evals (`skills/*/evals/`) with `claude plugin eval`, with and without the plugin, and keep the results.
+- [ ] Run the skill evals (`plugins/secure-my-server/skills/*/evals/`) with `claude plugin eval`, with and without the plugin, and keep the results.
 - [ ] Tune both skill descriptions so Claude picks the right one.
 - [ ] A "report only" mode: findings table, no changes at all.
 
@@ -24,6 +24,6 @@
 ## How to improve it
 1. Use it on a real server.
 2. Write down anything that went wrong or was confusing.
-3. Add the trap to `skills/secure-my-server/references/07-traps.md`, or fix the guide for that setup.
+3. Add the trap to `plugins/secure-my-server/skills/secure-my-server/references/07-traps.md`, or fix the guide for that setup.
 4. Run `tests/run.sh` and `python3 tools/check_repo.py`.
 5. Open a pull request (see `CONTRIBUTING.md`).

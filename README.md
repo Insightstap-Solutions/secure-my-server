@@ -1,4 +1,4 @@
-<p align="center"><img src=".claude-plugin/icon.png" width="96" alt=""></p>
+<p align="center"><img src="plugins/secure-my-server/.claude-plugin/icon.png" width="96" alt=""></p>
 
 # Secure My Server
 
@@ -17,8 +17,8 @@ Right now its main job is the **October 2026 "PHP2Shell" vulnerabilities** in PH
 | Skill | **`php2shell-response`** | Finds **every** PHP on one or many servers, decides honestly whether each is patched (distro backports included), looks for signs the hole was already used, patches or mitigates per setup, and proves it. |
 | Skill | **`secure-my-server`** | The full pass: inventory, break-in check, open database ports, PHP and web-server hardening, secret rotation, deploy safety, independent re-check, simple reports. |
 | Agent | **`server-verifier`** | A second Claude that re-checks everything, read-only. It is given the problems, never the fixer's conclusions. |
-| Scripts | `scripts/` | Read-only detectors you can also run **without Claude**. They never print secrets or file contents. |
-| Guides | `guides/` | What to do on each setup: Docker, Debian/Ubuntu, RHEL family, Alpine, cPanel, Plesk, aaPanel, DirectAdmin, CyberPanel/OpenLiteSpeed, FrankenPHP, hand-built PHP; nginx, Apache, Caddy, LiteSpeed, CDN/WAF; ufw, firewalld, nftables/iptables, Docker networking. |
+| Scripts | `plugins/secure-my-server/scripts/` | Read-only detectors you can also run **without Claude**. They never print secrets or file contents. |
+| Guides | `plugins/secure-my-server/guides/` | What to do on each setup: Docker, Debian/Ubuntu, RHEL family, Alpine, cPanel, Plesk, aaPanel, DirectAdmin, CyberPanel/OpenLiteSpeed, FrankenPHP, hand-built PHP; nginx, Apache, Caddy, LiteSpeed, CDN/WAF; ufw, firewalld, nftables/iptables, Docker networking. |
 
 ---
 
@@ -69,8 +69,8 @@ What happens, for PHP2Shell:
 
 Every detector is one self-contained bash file. Run it on a server over SSH; nothing is installed or changed:
 ```bash
-ssh myvps 'sudo -n bash -s' < scripts/php_runtimes.sh
-ssh myvps 'sudo -n bash -s -- --since 2026-10-15' < scripts/php2shell_ioc_scan.sh
+ssh myvps 'sudo -n bash -s' < plugins/secure-my-server/scripts/php_runtimes.sh
+ssh myvps 'sudo -n bash -s -- --since 2026-10-15' < plugins/secure-my-server/scripts/php2shell_ioc_scan.sh
 ```
 | Script | Tells you |
 |---|---|
@@ -98,24 +98,26 @@ Output is one finding per line: `LEVEL<TAB>CHECK<TAB>DETAIL`, with LEVEL one of 
 
 ## Repository layout
 ```
-.claude-plugin/   plugin.json, marketplace.json, icon
-skills/
-  php2shell-response/   SKILL.md + references/ (advisory, compromise response, fleet, verify)
-  secure-my-server/     SKILL.md + references/ (9 phases, 30 traps, worked example)
-agents/           server-verifier.md
-scripts/          read-only detectors + rotation helpers
-guides/           php/, web/, firewall/  (one file per setup)
-templates/        php, nginx, caddy, firewall, compose
-tests/            bats tests with fake servers (fixtures)
-tools/            repository checks
-docs/             plain-English guides for people
+.claude-plugin/marketplace.json     the marketplace (this repo)
+plugins/secure-my-server/           THE PLUGIN: only this folder is installed
+  .claude-plugin/                   plugin.json, icon
+  skills/
+    php2shell-response/             SKILL.md + references/ (advisory, compromise response, fleet, verify)
+    secure-my-server/               SKILL.md + references/ (9 phases, 30 traps, worked example)
+  agents/                           server-verifier.md
+  scripts/                          read-only detectors + rotation helpers
+  guides/                           php/, web/, firewall/  (one file per setup)
+  templates/                        php, nginx, caddy, firewall, compose
+tests/                              bats tests with fake servers (never installed)
+tools/                              repository checks
+docs/                               plain-English guides for people
 ```
 
 ---
 
 ## Status
 
-**v0.2.0.** The steps come from a real incident and were used on a real server. The detectors are tested against fake servers for each supported setup, not yet against many real ones. Please report what breaks: [issues](https://github.com/ankitraj20616/secure-my-server/issues). Security problems in the plugin itself: see [`SECURITY.md`](SECURITY.md).
+**v0.2.1.** The steps come from a real incident and were used on a real server. The detectors are tested against fake servers for each supported setup, not yet against many real ones. Please report what breaks: [issues](https://github.com/ankitraj20616/secure-my-server/issues). Security problems in the plugin itself: see [`SECURITY.md`](SECURITY.md).
 
 The advisory facts are dated **27 October 2026**. Always check [php.net](https://www.php.net/archive/2026.php) for newer advisories.
 

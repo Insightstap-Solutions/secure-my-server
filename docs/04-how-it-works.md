@@ -1,10 +1,10 @@
 # 4. How it works
 
-The full check (`secure-my-server`) works in **8 phases**, always in this order. Each phase has its own detailed file in `skills/secure-my-server/references/`.
+The full check (`secure-my-server`) works in **8 phases**, always in this order. Each phase has its own detailed file in `plugins/secure-my-server/skills/secure-my-server/references/`.
 
 The PHP2Shell skill (`php2shell-response`) is a shorter version of the same idea: look → check for a break-in → stop the bleeding → patch → prove it → report. It can do the read-only steps on many servers at the same time.
 
-**Where the "every server is different" part lives:** phase 1 runs `scripts/detect_stack.sh` and `scripts/php_runtimes.sh`. They say, for example, "cPanel, Apache, three PHP versions, no Docker". Claude then opens only the matching files in `guides/`, such as `guides/php/cpanel-whm.md`, and follows those commands instead of guessing.
+**Where the "every server is different" part lives:** phase 1 runs `scripts/detect_stack.sh` and `scripts/php_runtimes.sh` (in `plugins/secure-my-server/`). They say, for example, "cPanel, Apache, three PHP versions, no Docker". Claude then opens only the matching files in `guides/`, such as `guides/php/cpanel-whm.md`, and follows those commands instead of guessing.
 
 ```
 1. Look around      →  2. Check for break-in  →  3. Close open doors

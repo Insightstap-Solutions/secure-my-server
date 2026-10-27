@@ -1,7 +1,7 @@
 {
   "name": "secure-my-server",
   "displayName": "Secure My Server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Find, patch and clean up the October 2026 PHP2Shell vulnerabilities (CVE-2026-109618/109619) and harden Linux servers of any setup - distro PHP, Docker, cPanel, Plesk, aaPanel, DirectAdmin, LiteSpeed - with read-only detectors, per-stack guides, approval gates and an independent verifier.",
   "author": {
     "name": "Ankit Raj",

@@ -15,9 +15,11 @@ tests/run.sh                       # shellcheck + bats
 python3 tools/check_repo.py        # frontmatter, paths, version, privacy
 claude plugin validate . --strict  # if you have Claude Code
 ```
-If you change behaviour, add a line to `CHANGELOG.md`. A release also bumps `version` in `.claude-plugin/plugin.json`.
+If you change behaviour, add a line to `CHANGELOG.md`. A release also bumps `version` in `plugins/secure-my-server/.claude-plugin/plugin.json`, then `claude plugin tag plugins/secure-my-server --push`.
 
 ## Adding a new stack
 1. A fixture under `tests/fixtures/` that looks like that server (fake files and tiny shim binaries; never real PHP).
-2. Detection in `scripts/detect_stack.sh` and/or `scripts/php_runtimes.sh`, with a test.
-3. A guide in `guides/`, with the same sections as the others, and a row in `guides/README.md`.
+2. Detection in `plugins/secure-my-server/scripts/detect_stack.sh` and/or `php_runtimes.sh`, with a test.
+3. A guide in `plugins/secure-my-server/guides/`, with the same sections as the others, and a row in its `README.md`.
+
+**Keep test data out of the plugin folder.** Only `plugins/secure-my-server/` is installed and published; fixtures that look like web shells or keys belong in `tests/`.

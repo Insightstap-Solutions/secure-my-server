@@ -1,7 +1,13 @@
 # Changelog
 
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/).
-Claude Code only offers an update when `version` in `.claude-plugin/plugin.json` changes, so every release bumps it.
+Claude Code only offers an update when `version` in `plugins/secure-my-server/.claude-plugin/plugin.json` changes, so every release bumps it.
+
+## [0.2.1] - 2026-10-27
+
+### Changed
+- The plugin now lives in `plugins/secure-my-server/`. Only that folder is installed, so test fixtures (fake web shells, fake keys, a fake malicious crontab) never reach users' machines. The install commands are unchanged.
+- The plugin folder has its own README and LICENSE, and says plainly how it handles data.
 
 ## [0.2.0] - 2026-10-27
 

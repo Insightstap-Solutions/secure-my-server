@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "secure-my-server",
-      "source": "./",
+      "source": "./plugins/secure-my-server",
       "description": "Find, patch and clean up PHP2Shell (CVE-2026-109618/109619) and harden Linux servers of any setup, with approval gates and an independent verifier.",
       "category": "security",
       "tags": ["security", "php", "server-hardening", "incident-response"]

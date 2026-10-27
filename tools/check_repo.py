@@ -21,6 +21,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+PLUGIN = ROOT / "plugins" / "secure-my-server"
+PLUGIN_REL = "plugins/secure-my-server/"
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 RESERVED = ("claude", "anthropic")
 PATH_RE = re.compile(r"\$\{(CLAUDE_PLUGIN_ROOT|CLAUDE_SKILL_DIR)\}/([A-Za-z0-9_./-]+)")
@@ -73,23 +75,23 @@ def walk_text_files():
 
 
 def main() -> int:
-    for skill in sorted((ROOT / "skills").glob("*/SKILL.md")):
+    for skill in sorted((PLUGIN / "skills").glob("*/SKILL.md")):
         check_named(skill, "skill")
         if skill.parent.name != frontmatter(skill).get("name"):
             problems.append(f"{skill}: folder name and skill name differ")
-    for agent in sorted((ROOT / "agents").glob("*.md")):
+    for agent in sorted((PLUGIN / "agents").glob("*.md")):
         check_named(agent, "agent")
 
     for p, rel in walk_text_files():
         text = p.read_text(encoding="utf-8", errors="replace")
         if p.suffix == ".md":
             skill_dir = None
-            parts = rel.split("/")
-            if parts[0] == "skills" and len(parts) > 2:
-                skill_dir = ROOT / "skills" / parts[1]
+            parts = rel[len(PLUGIN_REL):].split("/") if rel.startswith(PLUGIN_REL) else []
+            if parts and parts[0] == "skills" and len(parts) > 2:
+                skill_dir = PLUGIN / "skills" / parts[1]
             for var, sub in PATH_RE.findall(text):
                 sub = sub.rstrip(".")
-                base = ROOT if var == "CLAUDE_PLUGIN_ROOT" else skill_dir
+                base = PLUGIN if var == "CLAUDE_PLUGIN_ROOT" else skill_dir
                 if base is None:
                     continue
                 target = base / sub
@@ -125,11 +127,19 @@ def main() -> int:
         if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".gif", ".webp"} and b"\0" in path.read_bytes():
             problems.append(f"{rel}: contains NUL bytes (binary); store it as text (see *.nulsrc)")
 
-    version = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())["version"]
+    version = json.loads((PLUGIN / ".claude-plugin/plugin.json").read_text())["version"]
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     m = re.search(r"^## \[?(\d+\.\d+\.\d+)", changelog, re.M)
     if not m or m.group(1) != version:
         problems.append(f"CHANGELOG.md newest entry ({m.group(1) if m else 'none'}) != plugin.json version {version}")
+
+    # The published bundle is the plugin folder only: tests, fixtures and CI stay outside it.
+    for name in ("tests", "fixtures", ".github"):
+        if (PLUGIN / name).exists():
+            problems.append(f"{PLUGIN_REL}{name}: belongs at the repository root, not in the published plugin")
+    for need in ("README.md", "LICENSE"):
+        if not (PLUGIN / need).is_file():
+            problems.append(f"{PLUGIN_REL}{need} is missing (the plugin directory needs it in the plugin folder)")
 
     for line in problems:
         print(f"FAIL  {line}")

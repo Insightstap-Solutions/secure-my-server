@@ -1,7 +1,7 @@
 # Shared bats helpers. Every test runs with PATH restricted to a sandbox bin dir that holds the
 # core tools the scripts are allowed to use plus the shims a test asks for, so nothing on this
 # machine (real docker, ss, dpkg...) leaks into a result.
-SCRIPTS="$BATS_TEST_DIRNAME/../scripts"
+SCRIPTS="$BATS_TEST_DIRNAME/../plugins/secure-my-server/scripts"
 FIXTURES="$BATS_TEST_DIRNAME/fixtures"
 SHIMS="$BATS_TEST_DIRNAME/shims"
 SMS_ORIG_PATH=${SMS_ORIG_PATH:-$PATH}
