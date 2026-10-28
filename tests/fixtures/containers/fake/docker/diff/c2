@@ -1,0 +1,10 @@
+C /etc
+C /etc/cron.d
+A /etc/cron.d/sysupdate
+C /etc/cron.daily/rotate
+C /var/spool/cron/root
+C /usr/local/bin
+A /usr/local/bin/kworkerd
+C /root
+A /root/.ssh
+A /root/.ssh/authorized_keys

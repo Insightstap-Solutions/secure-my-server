@@ -6,7 +6,12 @@ Claude Code only offers an update when `version` in `plugins/secure-my-server/.c
 ## [Unreleased]
 
 ### Added
+- `container_sweep.sh`: a read-only detector for what an attacker may leave inside Docker: files added to each container's writable layer (running or stopped), native PHP session files in `/tmp` (counted, never named), scripts, PHP, `.so` files and `authorized_keys` in named volumes, containers outside compose, and stop signals PID 1 does not handle.
+- Compromise checks: Postgres ransom tables and untrusted languages, MySQL ransom tables. Traps T31–T33: stop settings apply only to new containers, Compose stopping the app while the queue drains, `retry_after` with more queue workers. `restart: true` in the compose patterns.
 - `PRIVACY.md`: what the plugin reads, where it goes, and what it never does; linked from `plugin.json` (`privacyPolicyUrl`).
+
+### Fixed
+- `container_sweep.sh` now handles empty inspect batches on Bash 4.2, matches script suffixes without case, understands Linux real-time stop signals safely, and reports blocked signals as unknown. Laravel queue guidance now requires a safety margin below `retry_after`.
 
 ## [0.2.1] - 2026-10-27
 

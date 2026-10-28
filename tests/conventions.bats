@@ -3,7 +3,7 @@
 
 setup() { load helpers; }
 
-DETECTORS="detect_stack php_runtimes php2shell_ioc_scan webshell_scan persistence_check"
+DETECTORS="detect_stack php_runtimes php2shell_ioc_scan webshell_scan persistence_check container_sweep"
 
 @test "every script parses (bash -n)" {
   for f in "$SCRIPTS"/*.sh; do bash -n "$f"; done
@@ -33,7 +33,7 @@ DETECTORS="detect_stack php_runtimes php2shell_ioc_scan webshell_scan persistenc
 }
 
 @test "detectors exit 2 on a bad --since, --root or --samples" {
-  for s in php2shell_ioc_scan webshell_scan persistence_check; do
+  for s in php2shell_ioc_scan webshell_scan persistence_check container_sweep; do
     run bash "$SCRIPTS/$s.sh" --since 15/10/2026
     [ "$status" -eq 2 ] || { echo "$s"; false; }
   done
@@ -65,7 +65,7 @@ DETECTORS="detect_stack php_runtimes php2shell_ioc_scan webshell_scan persistenc
 }
 
 @test "a planted fake secret never appears in any detector output, on any fixture" {
-  for fx in ubuntu aapanel cpanel rhel misc webroot compromised logs dockerhost; do
+  for fx in ubuntu aapanel cpanel rhel misc webroot compromised logs dockerhost containers; do
     setup_sandbox "$fx" dpkg-query ss ps ssh-keygen docker iptables
     for s in $DETECTORS; do
       args=(--root "$ROOT"); [ "$s" = webshell_scan ] || args+=(--docker)
@@ -77,7 +77,7 @@ DETECTORS="detect_stack php_runtimes php2shell_ioc_scan webshell_scan persistenc
 }
 
 @test "pure-bash date math agrees with GNU date (UTC)" {
-  for s in php2shell_ioc_scan webshell_scan persistence_check; do
+  for s in php2shell_ioc_scan webshell_scan persistence_check container_sweep; do
     (
       SMS_TEST=1 source "$SCRIPTS/$s.sh"
       for d in 1970-01-01 2000-02-29 2026-10-15 2026-12-31 2038-01-19; do

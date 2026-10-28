@@ -37,17 +37,19 @@ Use `docker exec <c> redis-cli` (with `-e REDISCLI_AUTH=...` if it has a passwor
   - `SHOW hba_file` and its rules (`trust` for non-local = critical);
   - `\du` (unknown roles? unexpected superusers?), databases, schemas, extensions;
   - non-extension functions, triggers, event triggers, large objects, foreign servers;
-  - `pg_stat_activity` client addresses.
+  - `pg_stat_activity` client addresses;
+  - **ransom notes and theft:** ordinary tables named like `readme`, `recover`, `warning`, `bitcoin`, `how_to`, `decrypt`, or a database that is suddenly empty. Search ordinary tables only (`relkind = 'r'`): Postgres's own view `pg_stat_recovery_prefetch` matches `recover`;
+  - **a way to run commands:** untrusted languages (`select lanname from pg_language where not lanpltrusted and lanname not in ('internal','c')`, for example `plpython3u` or `plperlu`) in every database, not only `postgres`.
 - **Logs:**
   - count `password authentication failed`, and the top usernames tried;
   - search for `COPY ... PROGRAM`, `lo_import`, `pg_read_file`, `CREATE ROLE`.
 - **Say the limit out loud:** with `log_connections` off, a **successful** login leaves no trace. You can only report "no evidence found", never "clean".
 - **App tables:** users and admins created or changed around suspicious dates, unknown email domains, privilege flags.
-- **MySQL:** `select user,host from mysql.user`, plus the app's admin users.
+- **MySQL:** `select user,host from mysql.user`, plus the app's admin users. Look for ransom tables the same way (`select table_schema, table_name from information_schema.tables where table_name regexp 'readme|recover|warning|bitcoin|how_to|ransom|decrypt'`), and for unknown `'%'` users with `FILE` or `SUPER`.
 
 ## 3. Web apps (PHP, Python, Node)
 
-Start with the scripts: `webshell_scan.sh --since <date>` and `persistence_check.sh --since <date>` cover most of this section. Then, by hand:
+Start with the scripts: `webshell_scan.sh --since <date>` and `persistence_check.sh --since <date>` cover most of this section; on a Docker host add `container_sweep.sh --since <date>` for what they cannot see inside containers and volumes. Then, by hand:
 - **Code files git does not know:** in the web root and in upload, storage and cache folders, compare `find` with `git ls-files`. Each framework has some expected generated files (for example Laravel's compiled views). Anything else is a question for the user.
 - **Admin users:** list them with `created_at`, and flag anything after the suspicious date.
 - **SSH keys:** `authorized_keys` comments for each user. **Ask the user to confirm each one.**
@@ -59,7 +61,8 @@ Start with the scripts: `webshell_scan.sh --since <date>` and `persistence_check
   ```
   On Ubuntu 24.04 `/lib` → `/usr/lib`, so `dpkg -S /lib/...` says "not owned". **That is a false positive**; check `/usr/lib/...` and the md5sums.
 - **Processes and connections:** `ps -eo pid,user,lstart,cmd`; ESTABLISHED peers per process, on the host and in each container's network namespace.
-- **tmp dirs:** `/tmp`, `/var/tmp`, `/dev/shm` on the host and in each container, plus `docker diff <c>` for added files (stopped containers too).
+- **tmp dirs:** `/tmp`, `/var/tmp`, `/dev/shm` on the host and in each container, plus `docker diff <c>` for added files (stopped containers too). `container_sweep.sh` does the `docker diff` part. A native PHP session file (`/tmp/sess_*`) in an app that keeps sessions in its framework or Redis is a leftover of the upload-progress exploit: count them and read their times, never paste their names (they are session ids).
+- **Named volumes:** `docker diff` does not see them. An uploads volume with a PHP file, or a Redis `/data` volume with a `.so` or an `authorized_keys`, is an attack. `container_sweep.sh` lists them.
 
 ## 4. Request-parsing exploits (PHP2Shell and similar)
 Run `php2shell_ioc_scan.sh --since <date>`. The indicators, and the honest limits of a log scan, are in the `php2shell-response` skill: `${CLAUDE_PLUGIN_ROOT}/skills/php2shell-response/references/advisory.md` ("What attacks look like") and `compromise-response.md`.

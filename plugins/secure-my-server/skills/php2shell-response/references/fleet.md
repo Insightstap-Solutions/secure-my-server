@@ -7,7 +7,7 @@ Start one subagent per server (or per group of 3–4 small servers), all in the 
 
 > Read-only check of `<ssh-host>` for the PHP2Shell vulnerabilities (CVE-2026-109618/109619). Change nothing on the server: no installs, restarts, edits or deletions. Never print secrets or file contents.
 > Run these scripts over ssh on stdin, from `<absolute path of the plugin's scripts folder>`, as `ssh <host> 'sudo -n bash -s -- <args>' < <script>`:
-> `detect_stack.sh`, `php_runtimes.sh`, `php2shell_ioc_scan.sh --since <date>`, `webshell_scan.sh --since <date>`, `persistence_check.sh --since <date>`.
+> `detect_stack.sh`, `php_runtimes.sh`, `php2shell_ioc_scan.sh --since <date>`, `webshell_scan.sh --since <date>`, `persistence_check.sh --since <date>`, and on a Docker host `container_sweep.sh --since <date>`.
 > If `sudo -n` fails, run them without sudo and say which checks could not run.
 > Report: (a) every PHP runtime as `path | kind | SAPI | version | STATUS | upload_progress`; (b) the control panel and the live web server; (c) every CRIT/WARN finding with its evidence line; (d) your verdict: no signs found / suspicious / compromised, and what you could not check.
 

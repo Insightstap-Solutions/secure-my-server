@@ -1,42 +1,79 @@
 #!/usr/bin/env bash
 # test shim for docker. Data: $SMS_FAKE/docker/containers (TSV: id name image project ports
-# privileged netmode created mounts), exec/<id> answer scripts, logs/<id> log text.
+# privileged netmode created mounts [stopsignal pid]), exec/<id> answer scripts, logs/<id> log text,
+# diff/<id> `docker diff` text, volumes (TSV: name mountpoint).
 # Supports only the Go templates the scripts use.
 d="${SMS_FAKE:-/nonexistent}/docker"
 [ -f "$d/containers" ] || { echo "Cannot connect to the Docker daemon" >&2; exit 1; }
-render() { # FMT then the 9 fields
-  local fmt=$1 id=$2 name=$3 image=$4 proj=$5 ports=$6 priv=$7 net=$8 created=$9 mounts=${10}
+render() { # FMT then the 11 fields
+  local fmt=$1 id=$2 name=$3 image=$4 proj=$5 ports=$6 priv=$7 net=$8 created=$9 mounts=${10} stopsig=${11:-} pid=${12:-0}
   fmt=${fmt//'{{.ID}}'/$id}; fmt=${fmt//'{{.Names}}'/$name}; fmt=${fmt//'{{.Name}}'//$name}
   fmt=${fmt//'{{.Image}}'/$image}; fmt=${fmt//'{{.Label "com.docker.compose.project"}}'/$proj}
   fmt=${fmt//'{{.Ports}}'/$ports}; fmt=${fmt//'{{.HostConfig.Privileged}}'/$priv}
   fmt=${fmt//'{{.HostConfig.NetworkMode}}'/$net}; fmt=${fmt//'{{.Created}}'/$created}
   fmt=${fmt//'{{range .Mounts}}{{.Source}},{{end}}'/${mounts:+$mounts,}}
+  fmt=${fmt//'{{.Config.StopSignal}}'/$stopsig}; fmt=${fmt//'{{.State.Pid}}'/$pid}
   printf '%s\n' "$fmt"
 }
 cmd=$1; shift
 case $cmd in
   ps)
-    fmt='{{.ID}}' ; all=0
-    while [ $# -gt 0 ]; do case $1 in --format) fmt=$2; shift 2 ;; -a) all=1; shift ;; -q) shift ;; -aq | -qa) all=1; shift ;; *) shift ;; esac; done
-    while IFS=$'\037' read -r id name image proj ports priv net created mounts; do
+    fmt='{{.ID}}' ; all=0; formatted=0
+    while [ $# -gt 0 ]; do case $1 in --format) fmt=$2; formatted=1; shift 2 ;; -a) all=1; shift ;; -q) shift ;; -aq | -qa) all=1; shift ;; *) shift ;; esac; done
+    if [ "$formatted" = 1 ] && [ "${SMS_DOCKER_FAIL_PS_FORMAT:-0}" = 1 ]; then
+      echo "docker ps format failed" >&2
+      exit 1
+    fi
+    while IFS=$'\037' read -r id name image proj ports priv net created mounts stopsig pid; do
       [ -z "$id" ] && continue
       # c5 is "exited": only listed with -a
-      [ "$id" = c5 ] && [ $all = 0 ] && continue
-      render "$fmt" "$id" "$name" "$image" "$proj" "$ports" "$priv" "$net" "$created" "$mounts"
-    done < <(tr '\t' '\037' < "$d/containers") ;;
+      [ "$id" = c5 ] && [ "$all" = 0 ] && continue
+      render "$fmt" "$id" "$name" "$image" "$proj" "$ports" "$priv" "$net" "$created" "$mounts" "$stopsig" "$pid"
+    done < <(tr '\t' '\037' < "$d/containers")
+    exit 0 ;;
   inspect)
     fmt=""; ids=()
     while [ $# -gt 0 ]; do case $1 in --format | -f) fmt=$2; shift 2 ;; *) ids+=("$1"); shift ;; esac; done
+    if [ "${SMS_DOCKER_FAIL_INSPECT:-0}" = 1 ]; then
+      echo "docker inspect failed" >&2
+      exit 1
+    fi
+    if [ -n "${SMS_DOCKER_MAX_INSPECT:-}" ] && [ "${#ids[@]}" -gt "$SMS_DOCKER_MAX_INSPECT" ]; then
+      echo "too many inspect ids" >&2
+      exit 1
+    fi
     for want in "${ids[@]}"; do
-      while IFS=$'\037' read -r id name image proj ports priv net created mounts; do
-        [ "$id" = "$want" ] && render "$fmt" "$id" "$name" "$image" "$proj" "$ports" "$priv" "$net" "$created" "$mounts"
+      while IFS=$'\037' read -r id name image proj ports priv net created mounts stopsig pid; do
+        [ "$id" = "$want" ] && render "$fmt" "$id" "$name" "$image" "$proj" "$ports" "$priv" "$net" "$created" "$mounts" "$stopsig" "$pid"
       done < <(tr '\t' '\037' < "$d/containers")
-    done ;;
+    done
+    # like the real one: success once every id was looked up (the loop's last test may be false)
+    exit 0 ;;
   exec)
     while [ $# -gt 0 ]; do case $1 in -i | -t | -it) shift ;; *) break ;; esac; done
     id=$1; shift
     [ -x "$d/exec/$id" ] || exit 126
     exec "$d/exec/$id" "$@" ;;
+  diff)
+    # by id or name, like the real one; no file = no changes
+    want=$1
+    while IFS=$'' read -r id name _; do
+      if [ "$id" = "$want" ] || [ "$name" = "$want" ]; then
+        [ -f "$d/diff/$id" ] && cat "$d/diff/$id"; exit 0
+      fi
+    done < <(tr '	' '' < "$d/containers")
+    echo "Error: No such container: $want" >&2; exit 1 ;;
+  volume)
+    sub=$1; shift
+    case $sub in
+      ls) [ -f "$d/volumes" ] && cut -f1 "$d/volumes"; exit 0 ;;
+      inspect)
+        while [ $# -gt 0 ]; do case $1 in --format | -f) shift 2 ;; *) want=$1; shift ;; esac; done
+        while IFS=$'	' read -r vname vmp; do [ "$vname" = "$want" ] && { printf '%s
+' "$vmp"; exit 0; }; done < "$d/volumes"
+        exit 1 ;;
+      *) exit 1 ;;
+    esac ;;
   logs)
     id=${!#}
     [ -f "$d/logs/$id" ] && cat "$d/logs/$id"; exit 0 ;;

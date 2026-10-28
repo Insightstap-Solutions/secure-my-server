@@ -33,7 +33,7 @@ For each problem, decide the check yourself; do not ask how it was fixed. Typica
    - `curl -sI https://<site>` shows no `X-Powered-By: PHP/...`;
    - error pages (404, 405) show no stack traces, file paths or debug output;
    - if edge rules were added: a multipart POST with an empty `boundary=` gets 400, and an ordinary small form POST is not blocked by the edge.
-3. **Signs of attack since the given date:** if the scripts folder is given, run `php2shell_ioc_scan.sh`, `webshell_scan.sh` and `persistence_check.sh` with `--since`. Otherwise do a short manual sweep: new PHP files in web and upload folders, new users and SSH keys, cron and systemd timers, odd processes and outbound connections.
+3. **Signs of attack since the given date:** if the scripts folder is given, run `php2shell_ioc_scan.sh`, `webshell_scan.sh` and `persistence_check.sh` with `--since`, and `container_sweep.sh` on a Docker host. Otherwise do a short manual sweep: new PHP files in web and upload folders, new users and SSH keys, cron and systemd timers, odd processes and outbound connections.
 4. **The sites still work:** home page and login return their normal status over HTTPS.
 
 ## Report (always this shape)

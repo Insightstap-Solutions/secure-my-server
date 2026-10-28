@@ -1,0 +1,4 @@
+C /var/cache/nginx
+A /var/cache/nginx/client_temp
+C /run
+A /run/nginx.pid

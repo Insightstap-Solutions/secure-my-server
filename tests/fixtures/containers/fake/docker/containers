@@ -1,0 +1,7 @@
+c1	shop-app	php:8.4-fpm	shop	9000/tcp	false	shop_default	2026-09-01T10:00:00.000Z	/srv/shop	SIGQUIT	4101
+c2	shop-queue	shop-app:latest	shop		false	shop_default	2026-09-01T10:00:00.000Z		SIGQUIT	4102
+c3	shop-web	nginx:1.27-alpine	shop	127.0.0.1:8080->80/tcp	false	shop_default	2026-09-01T10:00:00.000Z			4103
+c4	portainer	portainer/portainer-ce:2.21		127.0.0.1:9443->9443/tcp	false	bridge	2025-03-02T08:00:00.000Z	/var/run/docker.sock		4104
+c5	helper	alpine:3.20			false	bridge	2026-10-20T03:30:00.000Z			0
+c6	signaler	alpine:3.20	shop		false	shop_default	2026-09-01T10:00:00.000Z		35	4105
+c7	ignored	alpine:3.20	shop		false	shop_default	2026-09-01T10:00:00.000Z		SIGTERM	4106

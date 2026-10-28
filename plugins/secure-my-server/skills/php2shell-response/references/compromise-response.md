@@ -17,14 +17,15 @@ Never print the payloads you find. Describe them by pattern, size and hash.
 ## 1. Choose the window
 The exposure starts on the day the box became reachable **and** vulnerable. For this bug that is at most 21 Oct 2026 (public release; exploits followed within two days). If a runtime was patched late, the window ends when its **last old worker** stopped, not when the package was installed.
 
-## 2. Run the three scans
-All three are read-only. Use the same `--since` date.
+## 2. Run the scans
+All of them are read-only. Use the same `--since` date.
 
 | Script | Looks for | Good to know |
 |---|---|---|
 | `php2shell_ioc_scan.sh` | FPM crashes (SIGSEGV/SIGABRT), `in Unknown on line 0` memory errors, 502 bursts on POST, multipart without a boundary in JSON logs | Normal access logs do not record Content-Type. **No hits means "nothing found", not "not attacked".** |
 | `webshell_scan.sh` | new or changed PHP files, PHP inside upload/storage/cache folders, PHP code in image files, eval/system fed by request data, executables in /tmp | Frameworks use `eval` legitimately in `vendor/`; those are INFO unless new |
 | `persistence_check.sh` | new users, uid 0, sudoers, SSH keys, cron, systemd units no package owns, `ld.so.preload`, deleted executables, miners, outbound connections, privileged containers | Every SSH key: **ask the user** whether they recognise it |
+| `container_sweep.sh` (Docker hosts) | files added inside each container since its image was built, native PHP session files (`/tmp/sess_*`), scripts and `.so` files in named volumes, containers outside compose | **Run it before any recreate:** a recreated container starts with an empty writable layer, so the evidence is gone |
 
 Then, by hand, for each web app:
 - PHP files in public or upload folders that git does not know: `git ls-files` vs `find`;

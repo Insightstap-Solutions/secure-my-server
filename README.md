@@ -79,6 +79,7 @@ ssh myvps 'sudo -n bash -s -- --since 2026-10-15' < plugins/secure-my-server/scr
 | `php2shell_ioc_scan.sh` | exploit-shaped requests and PHP worker crashes in the logs |
 | `webshell_scan.sh` | new or planted PHP files, PHP hidden in upload folders and images |
 | `persistence_check.sh` | new users, SSH keys, cron, services, odd processes and outbound connections |
+| `container_sweep.sh` | files added inside containers, PHP session files in `/tmp`, scripts in Docker volumes, stop signals PID 1 ignores |
 
 Output is one finding per line: `LEVEL<TAB>CHECK<TAB>DETAIL`, with LEVEL one of `CRIT`, `WARN`, `INFO`, `OK`, `SKIP`. Each script has `--help`.
 

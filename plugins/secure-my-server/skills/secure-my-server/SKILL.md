@@ -100,6 +100,7 @@ In this skill's reference files, `scripts/`, `templates/` and `guides/` are fold
   - `detect_stack.sh`: OS, control panel, live web server, firewall, Docker, public listeners.
   - `php_runtimes.sh`: every PHP on the box, its kind, SAPI, version, patch status and key settings.
   - `php2shell_ioc_scan.sh`, `webshell_scan.sh`, `persistence_check.sh`: signs of an attack (Phase 2).
+  - `container_sweep.sh`: the same inside Docker: files added to containers, PHP session files in `/tmp`, scripts in volumes, stop signals PID 1 ignores. Run it before any recreate.
   - `fpm_ini_probe.sh`: read PHP values from a running FPM in a container, not the CLI.
   - `env_inventory.sh`: list secret keys per env file, with their class and a shared-value group.
   - `drift_check.sh`: is the live code really in git?

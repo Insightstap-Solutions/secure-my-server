@@ -61,7 +61,8 @@ How to read STATUS:
 Patching closes the door; it does not remove anyone who already came in. Read `${CLAUDE_SKILL_DIR}/references/compromise-response.md`, then run on every server with a runtime that was ever vulnerable since 21 Oct:
 - `php2shell_ioc_scan.sh --since <date the box became exposed>`: exploit-shaped requests, FPM crashes;
 - `webshell_scan.sh --since <same date>`: new or planted PHP files;
-- `persistence_check.sh --since <same date>`: cron, keys, users, services, odd processes and connections.
+- `persistence_check.sh --since <same date>`: cron, keys, users, services, odd processes and connections;
+- on a Docker host, `container_sweep.sh --since <same date>`: files added inside containers, `/tmp/sess_*` session files (the upload-progress exploit leaves them), scripts in volumes. Run it before you recreate anything.
 
 **Save evidence before any restart or recreate** (logs of containers you will replace, with checksums, in a root-only folder). A recreated container loses its `docker logs`.
 

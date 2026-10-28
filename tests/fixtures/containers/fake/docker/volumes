@@ -1,0 +1,6 @@
+shop_uploads	/var/lib/docker/volumes/shop_uploads/_data
+shop_redis	/var/lib/docker/volumes/shop_redis/_data
+shop_db	/var/lib/docker/volumes/shop_db/_data
+shop_code	/var/lib/docker/volumes/shop_code/_data
+shop_storage	/var/lib/docker/volumes/shop_storage/_data
+shop_marked	/var/lib/docker/volumes/shop_marked/_data

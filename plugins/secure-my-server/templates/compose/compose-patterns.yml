@@ -14,6 +14,12 @@ services:
   app:
     environment:
       PHP_FPM_MAX_CHILDREN: ${PHP_FPM_MAX_CHILDREN:-20}    # always give FPM pool vars a default
+    healthcheck:
+      # Placeholder only. Replace it with a real /up check through the app's serving path.
+      test: ["CMD-SHELL", "php -r 'exit(0);'"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   web:
     volumes:
@@ -21,7 +27,15 @@ services:
 
   queue:
     stop_signal: SIGTERM          # php-fpm images default to SIGQUIT; a bash PID 1 ignores it
-    stop_grace_period: 11m        # long jobs may finish, but only if the signal is handled
+    stop_grace_period: 11m        # long jobs may finish, but only if PID 1 catches the signal
+    depends_on:
+      app:
+        condition: service_healthy
+        restart: true             # Measured on Compose 5.0: queue stopped before app was recreated
+        # Older Compose may recreate app first. Version-independent fallback (trap T32):
+        # docker compose stop queue   # drains the queue while the old app keeps serving
+        # docker compose up -d --force-recreate app queue scheduler
+        # Prove downtime on staging with a /up probe loop before using this in production.
 
 volumes:
   caddy_logs:
